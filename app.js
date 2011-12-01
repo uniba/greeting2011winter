@@ -18,7 +18,10 @@ app.configure('production', config.production);
 // Routes
 app.get('/', routes.index);
 app.namespace('/api', function() {
-  app.get('tags/:tag', routes.api.tags);
+  app.get('media/popular', routes.api.media.popular);
+  app.get('media/search/:lat,:lng', routes.api.media.search);
+  app.get('tags/search/:q', routes.api.tags.search);
+  app.get('tags/recent/:name', routes.api.tags.recent);
 });
 
 // Boot

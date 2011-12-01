@@ -15,7 +15,8 @@ module.exports = function(app) {
       app.use(express.methodOverride());
       app.use(require('stylus').middleware({ src: __dirname + '/public' }));
       app.use(app.router);
-      app.use(express.static(__dirname + '/public'));  
+      app.use(express.static(__dirname + '/public'));
+      app.enable('jsonp callback');
     }
   , development: function() {
       app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
