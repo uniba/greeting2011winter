@@ -24,5 +24,5 @@ module.exports = function(app) {
   , production: function() {
       app.use(express.errorHandler()); 
     }
-	};
+  };
 };
