@@ -11,7 +11,7 @@ var app = module.exports = express.createServer()
   , config = require('./config')(app);
 
 // Configuration
-app.configure(config.default);
+app.configure(config.all);
 app.configure('development', config.development);
 app.configure('production', config.production);
 

@@ -6,6 +6,7 @@
     "express": "2.5.1"
   , "express-namespace": "0.0.x"
   , "stylus": ">= 0.0.1"
+  , "nib": ">= 0.0.1"
   , "jade": ">= 0.0.1"
   , "instagram-node-lib": "0.0.x"
   }
