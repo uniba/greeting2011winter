@@ -44,8 +44,11 @@
           , width = image.width
           , height = image.height
           , $wrapper = $('<div>').addClass('photo-wrapper').addClass(resolution)
-          , $a = $('<a>').attr('title', el.caption.text).attr('rel', 'instagram').attr('href', el.images.standard_resolution.url)
+          , $a = $('<a>').attr('rel', 'instagram').attr('href', el.images.standard_resolution.url)
           , $img = $('<img>').attr('src', url).attr('width', width).attr('height', height);
+        if (el.caption) {
+          $a.attr('title', el.caption.text)
+        }
         $img.appendTo($a);
         $wrapper.append($a).prependTo($instagram);
       });
@@ -61,13 +64,13 @@
     var stepCount = 0;
     
     function render(step) {
-        var center = $(window).width() / 2
-          , height = $(document).height()
-          , $step = $('<div>').addClass('step');
-        if (height < step.y) {
-          return;
-        }
-        $step.css({ position: 'absolute', top: step.y, left: center + step.x, zIndex: 1000 }).appendTo('body');
+      var center = $(window).width() / 2
+        , height = $(document).height()
+        , $step = $('<div>').addClass('step');
+      if (height < step.y) {
+        return;
+      }
+      $step.css({ position: 'absolute', top: step.y, left: center + step.x, zIndex: 1000 }).appendTo('body');
     }
     
     socket.on('init', function(data) {
