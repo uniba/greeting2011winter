@@ -10,12 +10,14 @@ var express = require('express')
 
 var app = module.exports = express.createServer()
   , config = require('./config')(app)
-  , io = socket.listen(app);
+  , io = socket.listen(app)
+  , steps = [];
 
 io.sockets.on('connection', function(socket) {
-  socket.emit('init', { /* send recent steps */ });
+  socket.emit('init', steps);
   socket.on('step', function(data) {
     socket.broadcast.emit('step', data);
+    steps.push(data);
   });
 });
 

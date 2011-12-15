@@ -1,8 +1,16 @@
+/**
+ * Application implementation.
+ * 
+ * @dependency jQuery v1.7.1
+ * @dependency jQuery Masonry v2.1.0
+ * @dependency FancyBox v1.3.4
+ * @dependency socket.io v0.8.4
+ * @dependency Instagram Client for API wrapper (./client.js)
+ */
+
 !function(window, document, $) {
 
   var client = new InstagramClient()
-    , images
-    , $images = []
     , socket = io.connect(location.protocol + '//' + location.hostname);
     
   $(function() {
@@ -10,12 +18,10 @@
     
     $instagram.masonry({
       itemSelector: '.photo-wrapper'
-//    , columnWidth: 100
-//    , gutterWidth: 10
-//    , isFitWidth: true
+    , isFitWidth: true
     , isAnimated: !Modernizr.csstransitions
     , animationOptions: {
-       duration: 1000
+        duration: 1000
       }
     });
     
@@ -41,7 +47,6 @@
           , $img = $('<img>').attr('src', url).attr('width', width).attr('height', height);
         $img.appendTo($a);
         $wrapper.append($a).prependTo($instagram);
-        // $images.push($wrapper.append($img));
       });
       $('a[rel=instagram]').fancybox();
       $instagram.masonry('remove', $instagram.find('.photo-wrapper:last')).masonry('reload');
@@ -50,19 +55,25 @@
     
     $(function() {
       var stepCount = 0;
-            
+      
+      function render(step) {
+          var center = $(window).width() / 2
+            , height = $(document).height()
+            , $step = $('<div>').addClass('step');
+          if (height < step.y) {
+            return;
+          }
+          $step.css({ position: 'absolute', top: step.y, left: center + step.x, zIndex: 1000 }).appendTo('body');
+      }
+      
       socket.on('init', function(data) {
-        // recieve recent steps
+        data.forEach(function(el, i) {
+          render(el);
+        });
       });
       
       socket.on('step', function(data) {
-        var center = $(window).width() / 2
-          , height = $(document).height()
-          , $step = $('<div>').addClass('step');
-        if (height < data.y) {
-          return;
-        }
-        $step.css({ position: 'absolute', top: data.y, left: center + data.x, zIndex: 1000 }).appendTo('body');;
+        render(data);
       });
       
       $(document).on('mousemove', function(e) {
@@ -72,23 +83,14 @@
           , relativeX = x - center;
         
         if (++stepCount % 10 === 0) {
-          socket.emit('step', { x: relativeX, y: y });
+          var step = { x: relativeX, y: y };
+          socket.emit('step', step);
+          render(step);
           stepCount = 0;
         }
       });
     });
-    
-    /*
-    setTimeout(function() {
-      var $img = $images.shift();
-      if ($img) {
-        $img.prependTo($instagram);
-        $instagram.masonry('reload');
-      }
-      setTimeout(arguments.callee, 400);
-    }, 0);
-    */
-    
+        
     client.emit('request');
   });
 

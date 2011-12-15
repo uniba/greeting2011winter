@@ -1,3 +1,9 @@
+/**
+ * Instagram Client for API wrapper
+ * 
+ * @dependency superagent v0.2.1
+ */
+
 !function(exports) {
 
   var request = superagent;
