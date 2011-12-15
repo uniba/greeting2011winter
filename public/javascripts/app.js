@@ -2,6 +2,7 @@
  * Application implementation.
  * 
  * @dependency jQuery v1.7.1
+ * @dependency jQuery easing plugin v1.3
  * @dependency jQuery Masonry v2.1.0
  * @dependency FancyBox v1.3.4
  * @dependency socket.io v0.8.4
@@ -52,46 +53,54 @@
       $instagram.masonry('remove', $instagram.find('.photo-wrapper:last')).masonry('reload');
       setTimeout(function() { client.emit('request'); }, 10000);
     });
+            
+    client.emit('request');
+  });
+  
+  $(function() {
+    var stepCount = 0;
     
-    $(function() {
-      var stepCount = 0;
-      
-      function render(step) {
-          var center = $(window).width() / 2
-            , height = $(document).height()
-            , $step = $('<div>').addClass('step');
-          if (height < step.y) {
-            return;
-          }
-          $step.css({ position: 'absolute', top: step.y, left: center + step.x, zIndex: 1000 }).appendTo('body');
-      }
-      
-      socket.on('init', function(data) {
-        data.forEach(function(el, i) {
-          render(el);
-        });
-      });
-      
-      socket.on('step', function(data) {
-        render(data);
-      });
-      
-      $(document).on('mousemove', function(e) {
-        var x = e.pageX
-          , y = e.pageY
-          , center = $(window).width() / 2
-          , relativeX = x - center;
-        
-        if (++stepCount % 10 === 0) {
-          var step = { x: relativeX, y: y };
-          socket.emit('step', step);
-          render(step);
-          stepCount = 0;
+    function render(step) {
+        var center = $(window).width() / 2
+          , height = $(document).height()
+          , $step = $('<div>').addClass('step');
+        if (height < step.y) {
+          return;
         }
+        $step.css({ position: 'absolute', top: step.y, left: center + step.x, zIndex: 1000 }).appendTo('body');
+    }
+    
+    socket.on('init', function(data) {
+      data.forEach(function(el, i) {
+        render(el);
       });
     });
-        
-    client.emit('request');
+    
+    socket.on('step', function(data) {
+      render(data);
+    });
+    
+    $(document).on('mousemove', function(e) {
+      var x = e.pageX
+        , y = e.pageY
+        , center = $(window).width() / 2
+        , relativeX = x - center;
+      
+      if (++stepCount % 10 === 0) {
+        var step = { x: relativeX, y: y };
+        socket.emit('step', step);
+        render(step);
+        stepCount = 0;
+      }
+    });
+  });
+  
+  $(function() {
+    $('a[href^=#]').on('click', function(e) {
+      var $target = $($(this).attr('href'));
+      $('html, body').animate({ scrollTop: $target.offset().top }, 500, 'easeOutExpo');
+      return false;
+    });
   });
 
 }(window, document, jQuery);
