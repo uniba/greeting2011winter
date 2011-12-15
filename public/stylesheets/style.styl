@@ -116,7 +116,8 @@ body
 
 .instagram
   width: 100%
-  margin-top: -5px
+  margin-left: -5x
+  margin-top: -10px
   padding: 48px - 5px
   height: 160px * 3px
   // background-color: #000000
@@ -127,10 +128,19 @@ body
     display: inline-block
     img
       border-radius: 4px
-
+  .thumbnail img
+    width: 85px
+    height: 85px
+  .low_resolution img
+    width: 180px
+    height: 180px
+  .standard_resolution img
+    width: 275px
+    height: 275px
+    
 .transitions-enabled.masonry,
 .transitions-enabled.masonry .masonry-brick
-  transition-duration: 0.7s;
+  transition-duration: 1s;
 .transitions-enabled.masonry
   transition-property: height, width;
 .transitions-enabled.masonry .masonry-brick
@@ -308,3 +318,8 @@ body
       absolute: top 67px left 272px
     .merry-christmas
       absolute: top 195px left 16px
+
+.step
+  width: 10px
+  height: 10px
+  background-color: red

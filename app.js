@@ -5,10 +5,19 @@
 
 var express = require('express')
   , namespace = require('express-namespace')
-  , routes = require('./routes');
+  , routes = require('./routes')
+  , socket = require('socket.io');
 
 var app = module.exports = express.createServer()
-  , config = require('./config')(app);
+  , config = require('./config')(app)
+  , io = socket.listen(app);
+
+io.sockets.on('connection', function(socket) {
+  socket.emit('init', { /* send recent steps */ });
+  socket.on('step', function(data) {
+    socket.broadcast.emit('step', data);
+  });
+});
 
 // Configuration
 app.configure(config.all);

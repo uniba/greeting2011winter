@@ -9,5 +9,6 @@
   , "nib": ">= 0.0.1"
   , "jade": ">= 0.0.1"
   , "instagram-node-lib": "0.0.x"
+  , "socket.io": "0.8.x"
   }
 }

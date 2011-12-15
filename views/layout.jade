@@ -3,14 +3,18 @@ html
   head
     meta(charset='UTF-8')
     meta(http-equiv='X-UA-Compatible', content='IE=edge,Chrome=1')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
     // base(href='http://uniba.jp/')
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='/javascripts/libs/fancybox/jquery.fancybox-1.3.4.css')
     script(src='//ajax.aspnetcdn.com/ajax/modernizr/modernizr-2.0.6-development-only.js')
     script(src='/javascripts/libs/superagent.js')
+    script(src='/socket.io/socket.io.js')
     script(src='//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js')
     script(src='//ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js')
     script(src='/javascripts/libs/jquery.masonry.min.js')
+    script(src='/javascripts/libs/fancybox/jquery.fancybox-1.3.4.js')
     script(src='/javascripts/client.js')
     script(src='/javascripts/app.js')
   body!= body
