@@ -10,7 +10,8 @@ var express = require('express')
 
 var app = module.exports = express.createServer()
   , config = require('./config')(app)
-  , io = require('./socket')(app);
+  , socket = require('./socket')
+  , io = socket.listen(app);
 
 // Configuration
 app.configure(config.all);
@@ -25,6 +26,7 @@ app.namespace('/api', function() {
   app.get('tags/search/:q', routes.api.tags.search);
   app.get('tags/recent/:name', routes.api.tags.recent);
 });
+app.get('/steps', socket.routes.steps);
 
 // Boot
 app.listen(process.env.PORT || 3000);

@@ -12,22 +12,20 @@ reset-html5()
 
 body
   font-size: 0.85em
-
 ul, li
   list-style: none outside
-
 img
   border: none
   vertical-align: top
-  
 a
   text-decoration: none
 body
   background-color: #dddddd
+  background-image: url(/images/bg_snow.png)
   font-family: $font, "Hiragino Kaku Gothic Pro"
 
 #container
-  padding: 0 0 100px 0
+  padding: 0 0 1024px 0
 
 #top
   width: $width
@@ -110,11 +108,9 @@ body
   margin-top: -10px
   padding: 48px - 5px
   height: 160px * 3px
-  // background-color: #000000
   .photo-wrapper
     margin: 5px
     float: left
-    // width: 150px
     display: inline-block
     img
       border-radius: 4px
@@ -127,7 +123,7 @@ body
   .standard_resolution img
     width: 275px
     height: 275px
-    
+
 .transitions-enabled.masonry,
 .transitions-enabled.masonry .masonry-brick
   transition-duration: 1s;
@@ -139,7 +135,7 @@ body
 .columns
   float: left
   width: 640px
-      
+
 #canvas
   absolute: top 0 left 0
   background-color: #ffffff
@@ -296,11 +292,24 @@ body
       absolute: top 195px left 16px
 
 .step
-  transition: all 1s ease-out 
-  width: 10px
-  height: 10px
-  background-color: red
+  transition: opacity 1s ease-out
   opacity: 0
   z-index: 4
-.step.appear
+  background-position: 0 0
+  background-repeat: no-repeat
+  &.l
+    width: 22px
+    height: 48px
+    margin-left: -30px
+    background-image: url(/images/footstamp/footstamp_left.png)
+    transform-origin: 100% 50%
+  &.r
+    width: 25px
+    height: 50px
+    background-image: url(/images/footstamp/footstamp_right.png)
+    transform-origin: 50% 100%
+  &.appear
     opacity: 0.5
+  &.disappear
+    opacity: 0
+    transition: opacity 7s ease-in

@@ -8,7 +8,6 @@ var express = require('express')
 // stylus compiler
 function compile(str, path) {
   return stylus(str)
-    // .set('compress', true)
     .set('filename', path)
     .include(nib.path);
 }

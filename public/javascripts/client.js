@@ -13,7 +13,7 @@
       return new InstagramClient();
     }
     this.counter = 0;
-    this.tags = ['illumination', 'generative', 'projectionmapping', 'interactiveart'];
+    this.tags = ['illumination', 'generative', 'xmas', 'projectionmapping', 'snow', 'interactiveart'];
     
     this.on('request', function() {
       var self = this

@@ -3,6 +3,7 @@
  * 
  * @dependency jQuery v1.7.1
  * @dependency jQuery easing plugin v1.3
+ * @dependency jquery.transform2d
  * @dependency jQuery Masonry v2.1.0
  * @dependency FancyBox v1.3.4
  * @dependency socket.io v0.8.4
@@ -15,7 +16,8 @@
     , socket = io.connect(location.protocol + '//' + location.hostname);
     
   $(function() {
-    var $instagram = $('.instagram');
+    var $instagram = $('.instagram')
+      , response = 0;
     
     $instagram.masonry({
       itemSelector: '.photo-wrapper'
@@ -31,12 +33,13 @@
       if (err) {
         return;
       }
+      ++response;
       $container = $('<div>');
       data.forEach(function(el, i) {
         var resolution;
-        if (el.likes.count > 50) {
+        if (el.likes.count > 30) {
           resolution = 'standard_resolution';
-        } else if (el.likes.count > 10) {
+        } else if (el.likes.count > 15) {
           resolution = 'low_resolution';
         } else {
           resolution = 'thumbnail';
@@ -54,10 +57,15 @@
         $img.appendTo($a);
         $wrapper.append($a).prependTo($container);
       });
-      $instagram.masonry('remove', $instagram.find('.last:last').prevUntil('.last'));
-      $container.find('.photo-wrapper').last().addClass('last').end().prependTo($instagram);
+      if (response >= 3) {
+        $instagram.masonry('remove', $instagram.find('.first:last').nextAll());
+      }
+      $container.find('.photo-wrapper')
+        .first().addClass('first').end()
+        .last().addClass('last').end()
+        .prependTo($instagram);
       $instagram.masonry('reload');
-      $('a[rel=instagram]').fancybox();
+      $('a[rel=instagram]').fancybox({ titlePosition: 'over', overlayColor: '#000' });
       setTimeout(function() { client.emit('request'); }, 10000);
     });
             
@@ -67,23 +75,27 @@
   $(function() {
     var stepCount = 0
       , sendPerStep = 10
-      , lastStep;
+      , lastStep
+      , direction = ['l', 'r'];
     
     function render(step) {
       var center = $(window).width() / 2
         , height = $(document).height()
         , left = center + step.x
-        , $step = $('<div>').addClass('step');
-      if (height < step.y || left < 1) {
+        , $step = $('<div>').addClass('step').addClass(step.d);
+      if (left < 1 || left > $(window).width()) {
         return;
       }
-      $step.css({ position: 'absolute', top: step.y, left: left }).appendTo('body');
-      setTimeout(function() { $step.addClass('appear') }, 0);
+      $step
+        .css({ transform: 'rotate(' + Math.round(step.r) + 'deg)' })
+        .css({ position: 'absolute', top: step.y, left: left }).appendTo('body');
+      setTimeout(function() { $step.addClass('appear'); }, 0);
+      setTimeout(function() { $step.addClass('disappear'); }, 10000);
     }
     
     socket.on('init', function(data) {
       data.forEach(function(el, i) {
-        render(el);
+        setTimeout(function() { render(el); }, i * 1000);
       });
     });
     
@@ -98,9 +110,17 @@
         , relativeX = x - center;
       
       if (++stepCount % sendPerStep === 0) {
-        var step = { x: relativeX, y: y, t: (new Date()).getTime() };
+        var step = { x: relativeX, y: y, d: direction.reverse()[0], t: (new Date()).getTime() };
+        if (lastStep) {
+          var rad = Math.atan2(step.y - lastStep.y, step.x - lastStep.x) + Math.PI
+            , deg = rad * 180 / Math.PI;
+          step.r = deg - 90;
+        } else {
+          step.r = 0;
+        }
         socket.emit('step', step);
         render(step);
+
         lastStep = step;
         stepCount = 0;
       }
