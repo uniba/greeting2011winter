@@ -27,9 +27,11 @@
     });
     
     client.on('recieve', function(err, data) {
+      var $container;
       if (err) {
         return;
       }
+      $container = $('<div>');
       data.forEach(function(el, i) {
         var resolution;
         if (el.likes.count > 50) {
@@ -50,10 +52,12 @@
           $a.attr('title', el.caption.text)
         }
         $img.appendTo($a);
-        $wrapper.append($a).prependTo($instagram);
+        $wrapper.append($a).prependTo($container);
       });
+      $instagram.masonry('remove', $instagram.find('.last:last').prevUntil('.last'));
+      $container.find('.photo-wrapper').last().addClass('last').end().prependTo($instagram);
+      $instagram.masonry('reload');
       $('a[rel=instagram]').fancybox();
-      $instagram.masonry('remove', $instagram.find('.photo-wrapper:last')).masonry('reload');
       setTimeout(function() { client.emit('request'); }, 10000);
     });
             
@@ -62,7 +66,8 @@
   
   $(function() {
     var stepCount = 0
-      , sendPerStep = 10;
+      , sendPerStep = 10
+      , lastStep;
     
     function render(step) {
       var center = $(window).width() / 2
@@ -72,7 +77,8 @@
       if (height < step.y || left < 1) {
         return;
       }
-      $step.css({ position: 'absolute', top: step.y, left: left, zIndex: 4 }).appendTo('body');
+      $step.css({ position: 'absolute', top: step.y, left: left }).appendTo('body');
+      setTimeout(function() { $step.addClass('appear') }, 0);
     }
     
     socket.on('init', function(data) {
@@ -95,6 +101,7 @@
         var step = { x: relativeX, y: y, t: (new Date()).getTime() };
         socket.emit('step', step);
         render(step);
+        lastStep = step;
         stepCount = 0;
       }
     });
