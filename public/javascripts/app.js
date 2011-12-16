@@ -61,16 +61,18 @@
   });
   
   $(function() {
-    var stepCount = 0;
+    var stepCount = 0
+      , sendPerStep = 10;
     
     function render(step) {
       var center = $(window).width() / 2
         , height = $(document).height()
+        , left = center + step.x
         , $step = $('<div>').addClass('step');
-      if (height < step.y) {
+      if (height < step.y || left < 1) {
         return;
       }
-      $step.css({ position: 'absolute', top: step.y, left: center + step.x, zIndex: 1000 }).appendTo('body');
+      $step.css({ position: 'absolute', top: step.y, left: left, zIndex: 4 }).appendTo('body');
     }
     
     socket.on('init', function(data) {
@@ -89,8 +91,8 @@
         , center = $(window).width() / 2
         , relativeX = x - center;
       
-      if (++stepCount % 10 === 0) {
-        var step = { x: relativeX, y: y };
+      if (++stepCount % sendPerStep === 0) {
+        var step = { x: relativeX, y: y, t: (new Date()).getTime() };
         socket.emit('step', step);
         render(step);
         stepCount = 0;
