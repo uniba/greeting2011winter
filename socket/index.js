@@ -31,7 +31,7 @@ exports.listen = function(app) {
     socket.on('step', function(data) {
       socket.broadcast.emit('step', data);
       steps.push(data);
-      store.sadd('steps', data);
+      // store.sadd('steps', data);
     });
   });
   
