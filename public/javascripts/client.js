@@ -15,7 +15,7 @@
     EventEmitter.call(this);
 
     this.counter = 0;
-    this.tags = ['illumination', 'generative', 'xmas', 'projectionmapping', 'snow', 'interactiveart'];
+    this.tags = ['illumination', 'generative', 'christmastree', 'projectionmapping', 'santa', 'interactiveart'];
     
     this.on('request', function() {
       var self = this
