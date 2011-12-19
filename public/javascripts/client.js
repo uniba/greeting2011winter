@@ -23,12 +23,13 @@
         .end(function(res) {
           if (res.ok) {
             self.counter = (self.counter + 1) % self.tags.length;
-            self.emit('recieve', null, res.body);
+            self.emit('response', null, res.body);
           } else {
-            self.emit('recieve', true, res.body);
+            self.emit('response', true, res.body);
           }
         });
     });
+    EventEmitter.call(this);
   }
   
   InstagramClient.prototype = new EventEmitter();

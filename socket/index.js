@@ -5,11 +5,18 @@ var socket = require('socket.io')
   , redis = require('redis')
   , url = require('url');
 
-var port = process.env.REDIS_PORT || 6379
-  , host = process.env.REDIS_HOST || 'localhost'
-  , store = redis.createClient(port, host)
+var parsed = url.parse(process.env.REDISTOGO_URL || 'redis://localhost:6379')
+  , auth = (parsed.auth || '').split(':')
+  , store = redis.createClient(parsed.port, parsed.hostname)
   , steps = []
-  , limit = 100;
+  , limit = 300;
+
+store.auth(auth[1], function(err, reply) {
+  if (err) {
+    return;
+  }
+  console.log(store.llen('steps'));
+});
 
 exports.listen = function(app) {
   var io = socket.listen(app);
@@ -24,6 +31,7 @@ exports.listen = function(app) {
     socket.on('step', function(data) {
       socket.broadcast.emit('step', data);
       steps.push(data);
+      store.sadd('steps', data);
     });
   });
   

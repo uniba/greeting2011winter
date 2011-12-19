@@ -1,12 +1,13 @@
 /**
  * Application implementation.
  * 
+ * @dependency Modernizr v2.0.6
  * @dependency jQuery v1.7.1
  * @dependency jQuery easing plugin v1.3
  * @dependency jquery.transform2d
  * @dependency jQuery Masonry v2.1.0
  * @dependency FancyBox v1.3.4
- * @dependency socket.io v0.8.4
+ * @dependency socket.io v0.8.7
  * @dependency Instagram Client for API wrapper (./client.js)
  */
 
@@ -28,7 +29,7 @@
       }
     });
     
-    client.on('recieve', function(err, data) {
+    client.on('response', function(err, data) {
       var $container;
       if (err) {
         return;
@@ -58,7 +59,7 @@
         $wrapper.append($a).prependTo($container);
       });
       if (response >= 3) {
-        $instagram.masonry('remove', $instagram.find('.first:last').nextAll());
+        $instagram.masonry('remove', $instagram.find('.first:last').nextAll().andSelf());
       }
       $container.find('.photo-wrapper')
         .first().addClass('first').end()
@@ -74,9 +75,17 @@
   
   $(function() {
     var stepCount = 0
-      , sendPerStep = 10
+      , sendPerStep = 15
       , lastStep
-      , direction = ['l', 'r'];
+      , direction = ['l', 'r']
+      , transEndEventNames = {
+          'WebkitTransition': 'webkitTransitionEnd'
+        , 'MozTransition': 'transitionend'
+        , 'OTransition': 'oTransitionEnd'
+        , 'msTransition': 'msTransitionEnd' // maybe?
+        , 'transition': 'transitionEnd'
+        }
+      , transitionEnd = transEndEventNames[Modernizr.prefixed('transition')];
     
     function render(step) {
       var center = $(window).width() / 2
@@ -90,12 +99,17 @@
         .css({ transform: 'rotate(' + Math.round(step.r) + 'deg)' })
         .css({ position: 'absolute', top: step.y, left: left }).appendTo('body');
       setTimeout(function() { $step.addClass('appear'); }, 0);
-      setTimeout(function() { $step.addClass('disappear'); }, 10000);
+      setTimeout(function() { $step.addClass('disappear').one(transitionEnd, function(e) { $(this).remove() }); }, 10000);
     }
     
     socket.on('init', function(data) {
+      var first = data[0];
       data.forEach(function(el, i) {
-        setTimeout(function() { render(el); }, i * 1000);
+        var delay = el.t - first.t;
+        if (delay > 100000) {
+          delay = 100000;
+        }
+        setTimeout(function() { render(el); }, delay);
       });
     });
     
