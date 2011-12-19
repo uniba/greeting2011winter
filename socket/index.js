@@ -2,10 +2,24 @@
  * Module dependencies.
  */
 var socket = require('socket.io')
-  , url = require('url');
+  , schema = require('../schema')
+  , mongoose = schema.mongoose
+  , Step = mongoose.model('Step', schema.Step);
 
 var steps = []
   , limit = 300;
+
+schema.connect(function(err) {
+  if (err) {
+    return;
+  }
+  Step.find({}, function(err, doc) {
+    if (err) {
+      return;
+    }
+    steps = doc.concat(steps);
+  });
+})
 
 exports.listen = function(app) {
   var io = socket.listen(app);
@@ -18,8 +32,19 @@ exports.listen = function(app) {
       socket.emit('init', steps);
     }
     socket.on('step', function(data) {
+      var i
+        , step;
+      
       socket.broadcast.emit('step', data);
       steps.push(data);
+      
+      // persistent
+      step = new Step();
+      step.client = socket.id;
+      for (i in data) {
+        step[i] = data[i];
+      }
+      step.save(function(err) { });
     });
   });
   

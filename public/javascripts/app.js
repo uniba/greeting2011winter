@@ -91,12 +91,12 @@
       var center = $(window).width() / 2
         , height = $(document).height()
         , left = center + step.x
-        , $step = $('<div>').addClass('step').addClass(step.d);
+        , $step = $('<div>').addClass('step').addClass(step.side);
       if (left < 1 || left > $(window).width()) {
         return;
       }
       $step
-        .css({ transform: 'rotate(' + Math.round(step.r) + 'deg)' })
+        .css({ transform: 'rotate(' + Math.round(step.direction) + 'deg) scale(0.66)' })
         .css({ position: 'absolute', top: step.y, left: left }).appendTo('body');
       setTimeout(function() { $step.addClass('appear'); }, 0);
       setTimeout(function() { $step.addClass('disappear').one(transitionEnd, function(e) { $(this).remove() }); }, 10000);
@@ -105,7 +105,7 @@
     socket.on('init', function(data) {
       var first = data[0];
       data.forEach(function(el, i) {
-        var delay = el.t - first.t;
+        var delay = el.timestamp - first.timestamp;
         if (delay > 100000) {
           delay = 100000;
         }
@@ -124,13 +124,19 @@
         , relativeX = x - center;
       
       if (++stepCount % sendPerStep === 0) {
-        var step = { x: relativeX, y: y, d: direction.reverse()[0], t: (new Date()).getTime() };
+        var step = {
+          x: relativeX
+        , y: y
+        , side: direction.reverse()[0]
+        , timestamp: (new Date()).getTime()
+        , leg: 'shoes'
+        };
         if (lastStep) {
           var rad = Math.atan2(step.y - lastStep.y, step.x - lastStep.x) + Math.PI
             , deg = rad * 180 / Math.PI;
-          step.r = deg - 90;
+          step.direction = deg - 90;
         } else {
-          step.r = 0;
+          step.direction = 0;
         }
         socket.emit('step', step);
         render(step);
