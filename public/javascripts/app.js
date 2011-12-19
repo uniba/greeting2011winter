@@ -28,7 +28,7 @@
         duration: 1000
       }
     });
-    
+        
     client.on('response', function(err, data) {
       var $container;
       if (err) {
@@ -69,7 +69,7 @@
       $('a[rel=instagram]').fancybox({ titlePosition: 'over', overlayColor: '#000' });
       setTimeout(function() { client.emit('request'); }, 10000);
     });
-            
+    
     client.emit('request');
   });
   

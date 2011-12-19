@@ -12,6 +12,8 @@
     if (!(this instanceof InstagramClient)) {
       return new InstagramClient();
     }
+    EventEmitter.call(this);
+
     this.counter = 0;
     this.tags = ['illumination', 'generative', 'xmas', 'projectionmapping', 'snow', 'interactiveart'];
     
@@ -29,10 +31,18 @@
           }
         });
     });
-    EventEmitter.call(this);
   }
   
+  /**
+   * Inherit from `EventEmitter.prototype`.
+   */
+  
   InstagramClient.prototype = new EventEmitter();
+  InstagramClient.prototype.constructor = InstagramClient;
+  
+  /**
+   * Expose constructor.
+   */
   
   exports.InstagramClient = InstagramClient;
   
