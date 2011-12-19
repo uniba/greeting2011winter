@@ -15,7 +15,6 @@ store.auth(auth[1], function(err, reply) {
   if (err) {
     return;
   }
-  console.log(store.llen('steps'));
 });
 
 exports.listen = function(app) {
