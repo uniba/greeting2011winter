@@ -5,7 +5,8 @@
 var mongoose = require('mongoose')
   , Schema = mongoose.Schema
   , ObjectId = mongoose.ObjectId
-  , url = process.env.MONGOLAB_URI || 'mongodb://localhost/greeting2011winter';
+  , url = process.env.MONGOLAB_URI || 'mongodb://localhost/greeting2011winter'
+  , noop = function() {};
 
 var Step = new Schema({
   client: { type: Number }
@@ -19,7 +20,7 @@ var Step = new Schema({
 });
 
 exports.connect = function(callback) {
-  mongoose.connect(url, callback || function() {});
+  mongoose.connect(url, callback || noop);
 };
 
 exports.mongoose = mongoose;

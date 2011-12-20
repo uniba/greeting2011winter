@@ -5,8 +5,7 @@
 
 var express = require('express')
   , namespace = require('express-namespace')
-  , routes = require('./routes')
-  , socket = require('socket.io');
+  , routes = require('./routes');
 
 var app = module.exports = express.createServer()
   , config = require('./config')(app)
